@@ -69,11 +69,12 @@ class NfcManager extends ReactContextBaseJavaModule implements ActivityEventList
     private static final String ERR_GET_ACTIVITY_FAIL = "fail to get current activity";
     private static final String ERR_NO_NFC_SUPPORT = "no nfc support";
 
-    private void sendEvent(ReactContext reactContext, String eventName, @NullableWritableMap params){
-        reactContext
-            .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-            .emit(eventName, params);
+    private void sendEvent(ReactContext reactContext, String eventName, @Nullable WritableMap params) {
+    reactContext
+        .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+        .emit(eventName, params);
     }
+
 
     static class WriteNdefRequest {
         NdefMessage message;
