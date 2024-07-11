@@ -1149,6 +1149,8 @@ class NfcManager extends ReactContextBaseJavaModule implements ActivityEventList
         final NfcManager manager = this;
         if (nfcAdapter != null && currentActivity != null && !currentActivity.isFinishing()) {
             try {
+                console.log("isReaderModeEnabled-->" + isReaderModeEnabled);
+                console.log("enable-->" + enable);
                 if (isReaderModeEnabled) {
                     if (enable) {
                         Log.i(LOG_TAG, "enableReaderMode: " + readerModeFlags);
