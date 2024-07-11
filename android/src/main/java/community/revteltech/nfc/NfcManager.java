@@ -41,6 +41,9 @@ import org.json.JSONException;
 
 import java.util.*;
 
+import com.facebook.react.modules.core.DeviceEventManagerModule;
+
+
 class NfcManager extends ReactContextBaseJavaModule implements ActivityEventListener, LifecycleEventListener {
     private static final String LOG_TAG = "ReactNativeNfcManager";
     private final List<IntentFilter> intentFilters = new ArrayList<>();
@@ -65,6 +68,12 @@ class NfcManager extends ReactContextBaseJavaModule implements ActivityEventList
     private static final String ERR_API_NOT_SUPPORT = "unsupported tag api";
     private static final String ERR_GET_ACTIVITY_FAIL = "fail to get current activity";
     private static final String ERR_NO_NFC_SUPPORT = "no nfc support";
+
+    private void sendEvent(ReactContext reactContext, String eventName, @NullableWritableMap params){
+        reactContext
+            .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+            .emit(eventName, params);
+    }
 
     static class WriteNdefRequest {
         NdefMessage message;
@@ -1144,13 +1153,18 @@ class NfcManager extends ReactContextBaseJavaModule implements ActivityEventList
 
     private void enableDisableForegroundDispatch(boolean enable) {
         Log.i(LOG_TAG, "enableForegroundDispatch, enable = " + enable);
+
+        // Send isReaderModeEnabled and enable values to JavaScript
+        WritableMap params = Arguments.createMap();
+        params.putBoolean("isReaderModeEnabled", isReaderModeEnabled);
+        params.putBoolean("enable", enable);
+        sendEvent(getReactApplicationContext(), "NfcManagerDebug", params);
+
         NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(context);
         Activity currentActivity = getCurrentActivity();
         final NfcManager manager = this;
         if (nfcAdapter != null && currentActivity != null && !currentActivity.isFinishing()) {
             try {
-                console.log("isReaderModeEnabled-->" + isReaderModeEnabled);
-                console.log("enable-->" + enable);
                 if (isReaderModeEnabled) {
                     if (enable) {
                         Log.i(LOG_TAG, "enableReaderMode: " + readerModeFlags);
